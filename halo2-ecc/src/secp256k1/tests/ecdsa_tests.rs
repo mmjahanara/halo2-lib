@@ -46,7 +46,7 @@ fn ecdsa_test<F: PrimeField>(
     let res = ecdsa_verify_no_pubkey_check::<F, Fp, Fq, Secp256k1Affine>(
         &ecc_chip, ctx, pk, r, s, m, 4, 4,
     );
-    assert_eq!(res.value(), &F::one());
+    assert_eq!(res.value(), &F::ONE);
 }
 
 fn random_parameters_ecdsa() -> (Fq, Fq, Fq, Secp256k1Affine) {

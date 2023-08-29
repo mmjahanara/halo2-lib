@@ -69,7 +69,7 @@ pub fn truncate<F: BigPrimeField>(
                 Existing(a_limb),
                 Witness(neg_carry_val),
                 Constant(limb_base),
-                previous.map(Existing).unwrap_or_else(|| Constant(F::zero())),
+                previous.map(Existing).unwrap_or_else(|| Constant(F::ZERO)),
             ],
             [0],
         );

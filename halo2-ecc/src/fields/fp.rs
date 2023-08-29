@@ -81,7 +81,7 @@ impl<'range, F: PrimeField, Fp: PrimeField> FpChip<'range, F, Fp> {
 
         let limb_base = biguint_to_fe::<F>(&(BigUint::one() << limb_bits));
         let mut limb_bases = Vec::with_capacity(num_limbs);
-        limb_bases.push(F::one());
+        limb_bases.push(F::ONE);
         while limb_bases.len() != num_limbs {
             limb_bases.push(limb_base * limb_bases.last().unwrap());
         }
@@ -121,7 +121,7 @@ impl<'range, F: PrimeField, Fp: PrimeField> FpChip<'range, F, Fp> {
             };
             borrow = Some(lt);
         }
-        self.gate().assert_is_const(ctx, &borrow.unwrap(), &F::one());
+        self.gate().assert_is_const(ctx, &borrow.unwrap(), &F::ONE);
     }
 
     pub fn load_constant_uint(&self, ctx: &mut Context<F>, a: BigUint) -> ProperCrtUint<F> {
@@ -234,7 +234,7 @@ impl<'range, F: PrimeField, Fp: PrimeField> FieldChip<F> for FpChip<'range, F, F
         let (out_or_p, underflow) =
             sub::crt(self.range(), ctx, p, a.clone(), self.limb_bits, self.limb_bases[1]);
         // constrain underflow to equal 0
-        self.gate().assert_is_const(ctx, &underflow, &F::zero());
+        self.gate().assert_is_const(ctx, &underflow, &F::ZERO);
 
         let a_is_zero = big_is_zero::positive(self.gate(), ctx, a.0.truncation.clone());
         ProperCrtUint(select::crt(self.gate(), ctx, a.0, out_or_p, a_is_zero))

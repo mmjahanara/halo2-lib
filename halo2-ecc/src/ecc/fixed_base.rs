@@ -32,7 +32,7 @@ where
     FC: FieldChip<F, FieldType = C::Base> + Selectable<F, FC::FieldPoint>,
 {
     if point.is_identity().into() {
-        let zero = chip.load_constant(ctx, C::Base::zero());
+        let zero = chip.load_constant(ctx, C::Base::ZERO);
         return EcPoint::new(zero.clone(), zero);
     }
     assert!(!scalar.is_empty());

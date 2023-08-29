@@ -195,7 +195,7 @@ fn check_points_are_unequal<F: PrimeField, FC: FieldChip<F>>(
             ComparableEcPoint::NonStrict(pt) => chip.enforce_less_than(ctx, pt.x.clone()),
         });
         let x_is_equal = chip.is_equal_unenforced(ctx, x1, x2);
-        chip.gate().assert_is_const(ctx, &x_is_equal, &F::zero());
+        chip.gate().assert_is_const(ctx, &x_is_equal, &F::ZERO);
     }
     (EcPoint::from(P), EcPoint::from(Q))
 }
@@ -279,7 +279,7 @@ where
     P = ec_select(chip, ctx, rand_pt, P, is_identity);
 
     let out = ec_sub_unequal(chip, ctx, P, Q, false);
-    let zero = chip.load_constant(ctx, FC::FieldType::zero());
+    let zero = chip.load_constant(ctx, FC::FieldType::ZERO);
     ec_select(chip, ctx, EcPoint::new(zero.clone(), zero), out, is_identity)
 }
 
@@ -354,7 +354,7 @@ pub fn ec_double_and_add_unequal<F: PrimeField, FC: FieldChip<F>>(
             ComparableEcPoint::NonStrict(pt) => chip.enforce_less_than(ctx, pt.x.clone()),
         });
         let x_is_equal = chip.is_equal_unenforced(ctx, x0.clone(), x1);
-        chip.gate().assert_is_const(ctx, &x_is_equal, &F::zero());
+        chip.gate().assert_is_const(ctx, &x_is_equal, &F::ZERO);
         x_0 = Some(x0);
     }
     let P = EcPoint::from(P);
@@ -375,7 +375,7 @@ pub fn ec_double_and_add_unequal<F: PrimeField, FC: FieldChip<F>>(
         // TODO: when can we remove this check?
         // constrains that x_2 != x_0
         let x_is_equal = chip.is_equal_unenforced(ctx, x_0.unwrap(), x_2);
-        chip.range().gate().assert_is_const(ctx, &x_is_equal, &F::zero());
+        chip.range().gate().assert_is_const(ctx, &x_is_equal, &F::ZERO);
     }
     // lambda_1 = lambda_0 + 2 * y_0 / (x_2 - x_0)
     let two_y_0 = chip.scalar_mul_no_carry(ctx, &P.y, 2);
@@ -579,7 +579,7 @@ where
             ec_select(chip, ctx, is_started_point, add_point, is_started[window_bits * idx]);
     }
     // if at the end, return identity point (0,0) if still not started
-    let zero = chip.load_constant(ctx, FC::FieldType::zero());
+    let zero = chip.load_constant(ctx, FC::FieldType::ZERO);
     ec_select(chip, ctx, curr_point, EcPoint::new(zero.clone(), zero), *is_started.last().unwrap())
     */
 }
@@ -860,7 +860,7 @@ impl<'chip, F: PrimeField, FC: FieldChip<F>> EccChip<'chip, F, FC> {
     {
         let pt = self.assign_point_unchecked(ctx, g);
         let is_on_curve = self.is_on_curve_or_infinity::<C>(ctx, &pt);
-        self.field_chip.gate().assert_is_const(ctx, &is_on_curve, &F::one());
+        self.field_chip.gate().assert_is_const(ctx, &is_on_curve, &F::ONE);
         pt
     }
 

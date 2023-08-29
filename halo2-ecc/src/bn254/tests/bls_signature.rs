@@ -74,7 +74,7 @@ fn bls_signature_test<F: PrimeField>(
             .final_exponentiation();
 
     // Compare the 2 results
-    assert_eq!(*result.value(), F::from(actual_result == Gt::identity()))
+    assert_eq!(*result.value(), F::from((actual_result == Gt::identity()) as u64))
 }
 
 fn random_bls_signature_circuit(

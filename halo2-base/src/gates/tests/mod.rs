@@ -1,3 +1,4 @@
+use ff::PrimeField;
 use crate::halo2_proofs::halo2curves::bn256::Fr;
 
 mod bitwise_rotate;

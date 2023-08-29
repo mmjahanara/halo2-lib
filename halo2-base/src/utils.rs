@@ -1,6 +1,7 @@
 #[cfg(feature = "halo2-pse")]
 use crate::halo2_proofs::arithmetic::CurveAffine;
-use crate::halo2_proofs::{arithmetic::FieldExt, circuit::Value};
+use crate::halo2_proofs::{circuit::Value};
+
 use core::hash::Hash;
 use num_bigint::BigInt;
 use num_bigint::BigUint;
@@ -8,10 +9,12 @@ use num_bigint::Sign;
 use num_traits::Signed;
 use num_traits::{One, Zero};
 
+use ff::{FromUniformBytes, PrimeField};
+
 /// Helper trait to represent a field element that can be converted into [u64] limbs.
 ///
 /// Note: Since the number of bits necessary to represent a field element is larger than the number of bits in a u64, we decompose the integer representation of the field element into multiple [u64] values e.g. `limbs`.
-pub trait ScalarField: FieldExt + Hash {
+pub trait ScalarField: PrimeField + Hash + Ord + FromUniformBytes<64> {
     /// Returns the base `2<sup>bit_len</sup>` little endian representation of the [ScalarField] element up to `num_limbs` number of limbs (truncates any extra limbs).
     ///
     /// Assumes `bit_len < 64`.
@@ -31,6 +34,17 @@ pub trait ScalarField: FieldExt + Hash {
         repr.as_mut()[..bytes.len()].copy_from_slice(bytes);
         Self::from_repr(repr).unwrap()
     }
+
+    fn get_lower_128(self) -> u128 {
+        let limbs = self.to_u64_limbs(2, 64);
+        (limbs[0] as u128) | ((limbs[1] as u128) << 64)
+    }
+
+    fn get_lower_32(self) -> u128 {
+        let limbs = self.to_u64_limbs(1, 32);
+        limbs[0] as u128
+    }
+
 }
 // See below for implementations
 
@@ -104,7 +118,7 @@ pub fn log2_ceil(x: u64) -> usize {
 
 /// Returns the modulus of [BigPrimeField].
 pub fn modulus<F: BigPrimeField>() -> BigUint {
-    fe_to_biguint(&-F::one()) + 1u64
+    fe_to_biguint(&-F::ONE) + 1u64
 }
 
 /// Returns the [BigPrimeField] element of 2<sup>n</sup>.
@@ -309,15 +323,15 @@ mod scalar_field_impls {
     use num_bigint::BigUint;
 
     use super::{decompose_u64_digits_to_limbs, ScalarField};
-    use crate::halo2_proofs::halo2curves::FieldExt;
     use std::hash::Hash;
+    use ff::{FromUniformBytes, PrimeField};
 
     /// We do a blanket implementation in 'community-edition' to make it easier to integrate with other crates.
     ///
     /// ASSUMING F::Repr is little-endian
-    impl<F> ScalarField for F
+    impl<F: FromUniformBytes<64> + Ord> ScalarField for F
     where
-        F: FieldExt + Hash,
+        F: PrimeField + Hash,
     {
         #[inline(always)]
         fn to_u64_limbs(self, num_limbs: usize, bit_len: usize) -> Vec<u64> {

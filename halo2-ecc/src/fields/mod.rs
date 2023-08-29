@@ -211,7 +211,7 @@ pub trait FieldChip<F: PrimeField>: Clone + Send + Sync {
     ) -> Self::FieldPoint {
         let b = b.into();
         let b_is_zero = self.is_zero(ctx, b.clone());
-        self.gate().assert_is_const(ctx, &b_is_zero, &F::zero());
+        self.gate().assert_is_const(ctx, &b_is_zero, &F::ZERO);
 
         self.divide_unsafe(ctx, a.into(), b)
     }
@@ -253,7 +253,7 @@ pub trait FieldChip<F: PrimeField>: Clone + Send + Sync {
     ) -> Self::FieldPoint {
         let b = b.into();
         let b_is_zero = self.is_zero(ctx, b.clone());
-        self.gate().assert_is_const(ctx, &b_is_zero, &F::zero());
+        self.gate().assert_is_const(ctx, &b_is_zero, &F::ZERO);
 
         self.neg_divide_unsafe(ctx, a.into(), b)
     }

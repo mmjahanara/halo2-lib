@@ -172,8 +172,8 @@ impl<'chip, F: PrimeField> Fp12Chip<'chip, F> {
 
         // compute `g0 + 1`
         g0[0].truncation.limbs[0] =
-            fp2_chip.gate().add(ctx, g0[0].truncation.limbs[0], Constant(F::one()));
-        g0[0].native = fp2_chip.gate().add(ctx, g0[0].native, Constant(F::one()));
+            fp2_chip.gate().add(ctx, g0[0].truncation.limbs[0], Constant(F::ONE));
+        g0[0].native = fp2_chip.gate().add(ctx, g0[0].native, Constant(F::ONE));
         g0[0].truncation.max_limb_bits += 1;
         g0[0].value += 1usize;
 
