@@ -2,6 +2,7 @@
 members = [
     "halo2-base",
     "halo2-ecc",
+    "hashes/poseidon",
 ]
 
 [profile.dev]
